@@ -65,6 +65,8 @@ class RegistrationAPIView(generics.CreateAPIView):
             return Response({'response': False, 'message': 'Ошибка при регистрации пользователя'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class UserLoginView(generics.CreateAPIView):
     serializer_class = UserLoginSerializer
     permission_classes = [IsAuthenticated]  # Требуется аутентификация
