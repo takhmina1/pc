@@ -1,3 +1,4 @@
+
 from sqlite3 import IntegrityError
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -10,6 +11,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.db import IntegrityError
 from .models import *
+from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
@@ -74,9 +76,10 @@ class UserLoginView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = authenticate_user(serializer.validated_data['email'], serializer.validated_data['password'])
         if user:
-            return Response({'response': True}, status=status.HTTP_200_OK)
+            token = default_token_generator.make_token(user)
+            return Response({'response': True, 'token': token}, status=status.HTTP_200_OK)
         else:
-            return Response({'response': True,'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'response': False, 'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserProfileListView(generics.ListAPIView):
     queryset = UserProfile.objects.all()
